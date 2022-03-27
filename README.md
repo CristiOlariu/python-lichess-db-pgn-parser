@@ -37,10 +37,10 @@ Sample input:
 to
 
 ```
-mAEz2AcC|20181231|82801|B|N|N|Y|Y|36|C45014|600+0|AliKhaled|1702|-13||ifospor|1628|+13||e4 e5 Nf3 Nc6 Bc4 Bc5 d4 exd4 c3 Nf6 Bg5? O-O? e5? Re8? Bxf6?? Qxf6 O-O Nxe5 Re1?? Nxf3+ gxf3 Rxe1+ Qxe1 dxc3?? Qe8+?! Bf8 Nxc3 Qxf3? h3? d6?! Nd5?? Bxh3 Ne7+ Kh8 Ng6+?! hxg6?!|0.12 0.37 0.23 0.15 0.1 0.24 -0.16 0.0 0.0 0.14 -0.86 0.3 -0.86 0.64 -2.88 -2.83 -3.04 -2.67 -8.32 -8.1 -8.14 -8.21 -8.12 -4.33 -5.28 -5.38 -5.4 -3.35 -5.12 -4.43 -10.3 -10.02 -18.8 -18.43 #-9 -24.37|600 600 598 599 596 596 588 593 586 584 577 581 551 559 505 553 503 550 465 545 464 544 462 529 445 526 442 513 343 467 226 422 147 418 104 405
+mAEz2AcC│20181231│82801│B│N│N│Y│Y│36│C45014│600+0│AliKhaled│1702│-13││ifospor│1628│+13││e4 e5 Nf3 Nc6 Bc4 Bc5 d4 exd4 c3 Nf6 Bg5? O-O? e5? Re8? Bxf6?? Qxf6 O-O Nxe5 Re1?? Nxf3+ gxf3 Rxe1+ Qxe1 dxc3?? Qe8+?! Bf8 Nxc3 Qxf3? h3? d6?! Nd5?? Bxh3 Ne7+ Kh8 Ng6+?! hxg6?!│0.12 0.37 0.23 0.15 0.1 0.24 -0.16 0.0 0.0 0.14 -0.86 0.3 -0.86 0.64 -2.88 -2.83 -3.04 -2.67 -8.32 -8.1 -8.14 -8.21 -8.12 -4.33 -5.28 -5.38 -5.4 -3.35 -5.12 -4.43 -10.3 -10.02 -18.8 -18.43 #-9 -24.37│600 600 598 599 596 596 588 593 586 584 577 581 551 559 505 553 503 550 465 545 464 544 462 529 445 526 442 513 343 467 226 422 147 418 104 405
 ```
 
-with the following field meaning, separated by "|":
+with the following field meaning, separated by "│" (ASCII 179):
 ```
  1. id: 
     game id - the unique game id as provided by lichess. Add this id to the path, e.g. https://lichess.org/GAME_ID and the original game from lichess will be retrieved.

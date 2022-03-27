@@ -1,7 +1,7 @@
 import os
 from typing import Dict
 
-SEP = '|'
+SEP = '│'  # ASCII 179
 
 
 def read_opening_map(fn: str) -> Dict:
@@ -45,7 +45,7 @@ def extract_headers(headers, opening_map=None):
     g_date = _process_date(headers.get('UTCDate', ''))
     g_time = _process_time(headers.get('UTCTime', ''))
     g_result = _proc_game_result(headers.get('Result', ''))
-    g_eco = opening_map.get(f"{headers.get('ECO', '')}|{headers.get('Opening', '')}",
+    g_eco = opening_map.get(f"{headers.get('ECO', '')}{SEP}{headers.get('Opening', '')}",
                             "?") if opening_map else headers.get('ECO', '')
     g_termination = _process_game_termination(headers.get('Termination', ''))
     g_tc = headers.get('TimeControl', '')
@@ -63,13 +63,16 @@ def extract_headers(headers, opening_map=None):
     return g_id, g_date, g_time, g_result, g_eco, g_termination, g_tc, g_wname, g_welo, g_welodiff, g_wtitle, g_bname, g_belo, g_belodiff, g_btitle
 
 
-def extract_clk(clks):
-    result = list()
-    for clk in clks:
-        h, m, s = int(clk[0]), int(clk[2:4]), int(clk[5:])
-        # h, m, s = int(h), int(m), int(s)
-        result.append(h*3600 + m*60 + s)
-    return map(str, result)
+# def extract_clk(clks):
+    # result = list()
+    # for clk in clks:
+    #     h, m, s = int(clk[0]), int(clk[2:4]), int(clk[5:])
+    #     # h, m, s = int(h), int(m), int(s)
+    #     result.append(h*3600 + m*60 + s)
+    # return map(str, result)
+
+def extract_clk(clk):
+    return str(3600 * int(clk[0]) + 60 * int(clk[2:4]) + int(clk[5:]))
 
 
 def read_games(game_file, opening_map=None):
@@ -137,7 +140,7 @@ def read_games(game_file, opening_map=None):
 
             g_nbMoves = str(len(moves))
             g_hasEval = "Y" if len(evals) else "N"
-            g_clocks = " ".join(extract_clk(clocks))
+            g_clocks = " ".join(map(extract_clk, clocks))
             g_hasClock = "Y" if len(clocks) else "N"
 
             g_evals = " ".join(evals)
