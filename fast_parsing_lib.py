@@ -36,14 +36,16 @@ def _process_date(date):
 
 def _process_time(time):
     return str(int(time[:2])*3600 + int(time[3:5])*60 + int(time[6:]))
-
+    # return f"{time[:2]}{time[3:5]}{time[6:]}"
 
 def extract_headers(headers, opening_map=None):
     site = headers.get('Site', None)
     g_id = site.split("/")[-1] if site else ''
     # g_date = headers.get('UTCDate', '').replace('.', '')
-    g_date = _process_date(headers.get('UTCDate', ''))
-    g_time = _process_time(headers.get('UTCTime', ''))
+    # g_date = _process_date(headers.get('UTCDate', ''))
+    g_date = headers.get('UTCDate', '')
+    g_time = headers.get('UTCTime', '')
+    g_timesecs = _process_time(headers.get('UTCTime', ''))
     g_result = _proc_game_result(headers.get('Result', ''))
     g_eco = opening_map.get(f"{headers.get('ECO', '')}{SEP}{headers.get('Opening', '')}",
                             "?") if opening_map else headers.get('ECO', '')
@@ -60,7 +62,7 @@ def extract_headers(headers, opening_map=None):
     g_belodiff = headers.get('BlackRatingDiff', '')
     g_btitle = headers.get('BlackTitle', '')
 
-    return g_id, g_date, g_time, g_result, g_eco, g_termination, g_tc, g_wname, g_welo, g_welodiff, g_wtitle, g_bname, g_belo, g_belodiff, g_btitle
+    return g_id, g_date, g_time, g_timesecs, g_result, g_eco, g_termination, g_tc, g_wname, g_welo, g_welodiff, g_wtitle, g_bname, g_belo, g_belodiff, g_btitle
 
 
 # def extract_clk(clks):
@@ -72,7 +74,12 @@ def extract_headers(headers, opening_map=None):
     # return map(str, result)
 
 def extract_clk(clk):
-    return str(3600 * int(clk[0]) + 60 * int(clk[2:4]) + int(clk[5:]))
+    if len(clk) == 7:
+        return str(3600 * int(clk[0]) + 60 * int(clk[2:4]) + int(clk[5:]))
+    else:
+        h, m, s = clk.split(':')
+        h, m, s = int(h), int(m), int(s)
+        return str(h*3600 + m*60 + s)
 
 
 def read_games(game_file, opening_map=None):
@@ -130,7 +137,7 @@ def read_games(game_file, opening_map=None):
 
         # at two empty lines, a game ends: yield all parsed info
         if blank_lines == 2:
-            g_id, g_date, g_time, g_result, g_eco, g_termination, g_tc, g_wname, g_welo, g_welodiff, g_wtitle, g_bname, g_belo, g_belodiff, g_btitle = extract_headers(
+            g_id, g_date, g_time, g_timesecs, g_result, g_eco, g_termination, g_tc, g_wname, g_welo, g_welodiff, g_wtitle, g_bname, g_belo, g_belodiff, g_btitle = extract_headers(
                 headers, opening_map)
             g_moves = " ".join(moves)
             g_mate = "N"
@@ -152,6 +159,7 @@ def read_games(game_file, opening_map=None):
                 g_id,
                 g_date,
                 g_time,
+                g_timesecs,
                 g_result,
                 g_termination,
                 g_mate,
@@ -184,9 +192,10 @@ def read_games(game_file, opening_map=None):
         line = game_file.readline()
 
 
-def write_partial_result(fn, games, result_file_counter):
+def write_partial_result(fn, output_folder, games, result_file_counter):
+    fn = fn.split("/")[-1]  # TODO: extract filename using the Path lib
     fn = fn+f'.part_{result_file_counter:06}.cri'
-    with open(fn, 'w') as result_file:
+    with open(output_folder + fn, 'w') as result_file:
         result_file.writelines(games)
         result_file.close()
-    os.system(f"gzip -f {fn}")
+    os.system(f"gzip -f {output_folder}{fn}")
