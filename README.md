@@ -37,7 +37,7 @@ Sample input:
 to
 
 ```
-mAEz2AcC│20181231│82801│B│N│N│Y│Y│36│C45014│600+0│AliKhaled│1702│-13││ifospor│1628│+13││e4 e5 Nf3 Nc6 Bc4 Bc5 d4 exd4 c3 Nf6 Bg5? O-O? e5? Re8? Bxf6?? Qxf6 O-O Nxe5 Re1?? Nxf3+ gxf3 Rxe1+ Qxe1 dxc3?? Qe8+?! Bf8 Nxc3 Qxf3? h3? d6?! Nd5?? Bxh3 Ne7+ Kh8 Ng6+?! hxg6?!│0.12 0.37 0.23 0.15 0.1 0.24 -0.16 0.0 0.0 0.14 -0.86 0.3 -0.86 0.64 -2.88 -2.83 -3.04 -2.67 -8.32 -8.1 -8.14 -8.21 -8.12 -4.33 -5.28 -5.38 -5.4 -3.35 -5.12 -4.43 -10.3 -10.02 -18.8 -18.43 #-9 -24.37│600 600 598 599 596 596 588 593 586 584 577 581 551 559 505 553 503 550 465 545 464 544 462 529 445 526 442 513 343 467 226 422 147 418 104 405
+mAEz2AcC│2018.12.31│23:00:01│82801│B│N│N│Y│Y│36│C45014│600+0│AliKhaled│1702│-13││ifospor│1628│+13││e4 e5 Nf3 Nc6 Bc4 Bc5 d4 exd4 c3 Nf6 Bg5? O-O? e5? Re8? Bxf6?? Qxf6 O-O Nxe5 Re1?? Nxf3+ gxf3 Rxe1+ Qxe1 dxc3?? Qe8+?! Bf8 Nxc3 Qxf3? h3? d6?! Nd5?? Bxh3 Ne7+ Kh8 Ng6+?! hxg6?!│0.12 0.37 0.23 0.15 0.1 0.24 -0.16 0.0 0.0 0.14 -0.86 0.3 -0.86 0.64 -2.88 -2.83 -3.04 -2.67 -8.32 -8.1 -8.14 -8.21 -8.12 -4.33 -5.28 -5.38 -5.4 -3.35 -5.12 -4.43 -10.3 -10.02 -18.8 -18.43 #-9 -24.37│600 600 598 599 596 596 588 593 586 584 577 581 551 559 505 553 503 550 465 545 464 544 462 529 445 526 442 513 343 467 226 422 147 418 104 405
 ```
 
 with the following field meaning, separated by "│" (ASCII 179):
@@ -45,21 +45,22 @@ with the following field meaning, separated by "│" (ASCII 179):
  1. id: 
     game id - the unique game id as provided by lichess. Add this id to the path, e.g. https://lichess.org/GAME_ID and the original game from lichess will be retrieved.
 
- 2. date: 
-    date, without the original periods (".") to save some space in the output files (maybe...)
+ 2. date
 
- 3. time: 
+ 3. time
+
+ 4. timesecs: 
     reformated "HH:MM:SS" to the second of the day, so a number from 0 corresponding to 00:00:00 up to 86399 which corresponds to 23:59:59. 
     
     Rationale for this: save time when using Spark or other big data processing frameworks, when searching for time-related insights, such as worst 24 hours in move accuracy.
 
- 4. result: 
+ 5. result: 
     'W' --> '1-0'
     'B' --> '0-1'
     'D' --> '1/2-1/2'
     or '*' if there is no termination (abandoned games, etc.)
  
- 5. termination: 
+ 6. termination: 
     'N' --> 'Normal'
     'T' --> 'Time forfeit'
     'A' --> 'Abandoned'
@@ -67,19 +68,19 @@ with the following field meaning, separated by "│" (ASCII 179):
     'R' --> 'Rules infraction'
     or '*' if the game termination could not be established
 
- 6. mate: 
+ 7. mate: 
     flag with "Y" or "N" indicating if the game ended in mate. It's not a pgn field, added here for faster future queries.
 
- 7. hasEval:
+ 8. hasEval:
     flag with "Y" or "N" indicating if the game has game engine evaluation
 
- 8. hasClock:
+ 9. hasClock:
     flag with "Y" or "N" indicating if the game has remaining time on the clock for each player.
 
- 9. nbMoves:
+10. nbMoves:
     total number of moves. It's not a pgn field, added here for faster future queries.
 
-10. eco:
+11. eco:
     the opening ECO (Encyclopedia of Chess Openings) code. 
     
     This field has been extended to comprise also the Opening field, so that "A04" and "Reti Opening" have become "A04006", so the 6th A04 opening. There is an opening map, mapping all these various 3-letter ECO codes and the Opening field to a 6-letter code in openings_map.txt. 
@@ -88,48 +89,48 @@ with the following field meaning, separated by "│" (ASCII 179):
 
     After parsing all games from lichess up to Feb 2022, a mapping was extracted that should, in theory, cover all possible chess ECO and Openings, based on the 3,099,534,127 parsed games.
 
-11. tc: 
+12. tc: 
     time control, as per the original pgn format.
 
-12. wname:
+13. wname:
     white's name
 
-13. welo:
+14. welo:
     white's elo
 
-14. welodiff:
+15. welodiff:
     white's elo diff after the game concluded, i.e. how many elo points have been lost or won
 
-15. wtitle:
+16. wtitle:
     white's title (e.g. GM)
 
-16: bname:
+17: bname:
     black's name
 
-17: belo:
+18: belo:
     black's elo
 
-18: belodiff:
+19: belodiff:
     black's elo diff after the game concluded, i.e. how many elo points have been lost or won
 
-19: btitle:
+20: btitle:
     black's title (e.g. GM)
 
-20. moves: 
+21. moves: 
     a space-separated list of moves from the game, preserving NAG's if the game was analysed (e.g. ?? means a blunder, etc.). These standard games always start from move one - pgn supports starting from any move if an initial position other than default is provided via a FEN - however, lichess exports full games from move 1.
 
     The first item in the list is white's move, then the second is black's move and so on, alternating.
 
     Can be empty if there were no moves performed.
 
-21. evals: 
+22. evals: 
     a space-separated list of evaluations, if the games was analyzed with a game engine.
 
     The first element in the list is the evaluation after white's move, the second item is the evaluation after black's move, and so on, alternating.
 
     Slight change: if a game ended in mate, an '#' is appended as last evaluation in order for the length of the moves, evals and locks to be the same, or else evals would be 1 short.
 
-22. clocks:
+23. clocks:
     a space-separated list of remaining time on the clock.
 
     The first element in the list is the remaining time after white's move, the second item is the remaining time after black's move, and so on, alternating.
